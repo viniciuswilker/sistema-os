@@ -28,6 +28,19 @@ func (h *OSHandler) CriarOS(c *gin.Context) {
 		return
 	}
 
+	usuarioID, exists := c.Get("usuarioID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"erro": "Usuário não autenticado"})
+		return
+	}
+
+	os.UsuarioID = usuarioID.(uint)
+
+	if os.UsuarioID == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"erro": "ID de usuário inválido"})
+		return
+	}
+
 	if err := h.repo.Criar(&os); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao criar OS"})
 		return

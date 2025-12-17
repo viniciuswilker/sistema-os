@@ -12,7 +12,7 @@ func main() {
 
 	database.InitDB()
 
-	database.DB.AutoMigrate(&models.Cliente{}, &models.Usuario{}, &models.OrdemServico{})
+	database.DB.AutoMigrate(&models.Cliente{}, &models.Usuario{}, &models.OrdemServico{}, &models.Cliente{})
 
 	r := gin.Default()
 
