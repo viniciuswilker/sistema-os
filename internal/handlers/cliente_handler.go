@@ -26,19 +26,25 @@ func (h *ClienteHandler) CriarCliente(c *gin.Context) {
 	}
 
 	if err := h.repo.Criar(&cliente); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao criar o cliente"})
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao criar cliente"})
 		return
 	}
 
 	c.JSON(http.StatusCreated, cliente)
+}
 
+func (h *ClienteHandler) ListarClientes(c *gin.Context) {
+	clientes, err := h.repo.Listar()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao listar clientes"})
+		return
+	}
+	c.JSON(http.StatusOK, clientes)
 }
 
 func (h *ClienteHandler) BuscarCliente(c *gin.Context) {
 	idParam := c.Param("id")
-
 	id, err := strconv.Atoi(idParam)
-
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"erro": "ID inválido"})
 		return
@@ -51,5 +57,4 @@ func (h *ClienteHandler) BuscarCliente(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, cliente)
-
 }
