@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrativo - TechService</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f6f7f8;
+            color: #0d141b;
+        }
+
+        .container-principal {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .hero {
+            width: 50%;
+            background-image:
+                linear-gradient(180deg, rgba(16, 25, 34, 0) 0%, rgba(16, 25, 34, 0.8) 100%),
+                url("https://lh3.googleusercontent.com/aida-public/AB6AXuAOcGfZACIR226f2qm3EJFoFykxAj8BIpyH3wLy09ndAkXO5CmgB7RP2G7C2P4qz7c-jDz8guVTbLxIDss6Z8HBw8IYAyvAhY2FyKQt58UgQbyHD2RMV6qSOJh8rQn5ew8Cs_dcb9pYnsbvNc7cFiNDEfMC2Dh-wRuIA-avkqOUW2oFrbq13_Xt1HFNQH789SRFLwRJILEQxQcAVp9Hx-AhOZ480mDhjm8FaXM-DCcCaVrCLFEBteXThKXcOY-aNBaCebX7r1eKMIrY");
+            background-size: cover;
+            background-position: center;
+            padding: 48px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .hero-conteudo {
+            position: relative;
+            z-index: 2;
+            max-width: 520px;
+            color: #fff;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo span {
+            background-color: #2b8cee;
+            padding: 8px;
+            border-radius: 6px;
+        }
+
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: #e5e7eb;
+        }
+
+        .indicadores {
+            display: flex;
+            gap: 8px;
+            margin-top: 24px;
+        }
+
+        .indicadores span {
+            height: 6px;
+            width: 10px;
+            background-color: #6b7280;
+            border-radius: 999px;
+        }
+
+        .indicadores .ativo {
+            width: 32px;
+            background-color: #2b8cee;
+        }
+
+        .overlay {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(43, 140, 238, 0.1);
+        }
+
+        .login {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background-color: #ffffff;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+        }
+
+        .logo-mobile {
+            display: none;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .login-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .login-header p {
+            color: #4c739a;
+        }
+
+        .formulario {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .campo label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .campo-label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .campo-label a {
+            font-size: 14px;
+            color: #2b8cee;
+            text-decoration: none;
+        }
+
+        .campo-input {
+            display: flex;
+            align-items: center;
+            border: 1px solid #e7edf3;
+            border-radius: 8px;
+            padding: 0 12px;
+            background-color: #f6f7f8;
+        }
+
+        .campo-input input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            height: 48px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .campo-input span {
+            color: #6b7280;
+        }
+
+        .acoes {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .btn-primario {
+            height: 48px;
+            border: none;
+            border-radius: 8px;
+            background-color: #2b8cee;
+            color: #fff;
+            font-size: 16px;
+        }
+    </style>
+
+
+
+
+</head>
+
+<body>
+
+    <div class="container-principal">
+
+        <!-- LADO ESQUERDO / HERO -->
+        <section class="hero">
+            <div class="hero-conteudo">
+                <div class="logo">
+                    <span class="material-symbols-outlined">handyman</span>
+                    <strong>TechService Admin</strong>
+                </div>
+
+                <h1>
+                    Excelência em gestão de <br>
+                    assistência técnica.
+                </h1>
+
+                <p>
+                    Centralize orçamentos, acompanhe ordens de serviço e
+                    otimize a produtividade da sua equipe técnica em um só lugar.
+                </p>
+
+                <div class="indicadores">
+                    <span class="ativo"></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+
+            <div class="overlay"></div>
+        </section>
+
+        <main class="login">
+
+            <div class="login-container">
+
+                <div class="logo-mobile">
+                    <span class="material-symbols-outlined">handyman</span>
+                    <strong>TechService Admin</strong>
+                </div>
+
+                <header class="login-header">
+                    <h2>Acesso Administrativo</h2>
+                    <p>Digite suas credenciais para acessar o painel.</p>
+                </header>
+
+                <form class="formulario" onsubmit="fazerLogin(event);">
+
+                    <div class="campo">
+                        <label for="email">E-mail ou Usuário</label>
+                        <div class="campo-input">
+                            <input type="text" id="email" placeholder="ex: joao@techservice.com">
+                            <span class="material-symbols-outlined">person</span>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <div class="campo-label">
+                            <label for="senha">Senha</label>
+                            <a href="#">Esqueceu a senha?</a>
+                        </div>
+
+                        <div class="campo-input">
+                            <input type="password" id="senha" placeholder="Digite sua senha">
+                            <span class="material-symbols-outlined">visibility_off</span>
+                        </div>
+                    </div>
+
+                    <div class="acoes">
+                        <button class="btn-primario">
+                            Acessar Sistema
+                        </button>
+
+                        <div class="divisor">
+                            <span></span>
+                            <p>Problemas com acesso?</p>
+                            <span></span>
+                        </div>
+
+                        <button class="btn-secundario">
+                            Contatar Suporte
+                        </button>
+                    </div>
+
+                </form>
+
+                <footer class="rodape">
+                    <p>© 2024 TechService System. v2.4.0</p>
+                    <p>Todos os direitos reservados.</p>
+                </footer>
+
+            </div>
+
+        </main>
+        <script>
+            async function fazerLogin(event) {
+                event.preventDefault();
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('senha').value;
+                const btn = document.querySelector('.btn-primario');
+
+                const textoOriginal = btn.innerText;
+                btn.innerText = "Entrando...";
+                btn.disabled = true;
+
+                try {
+                    const response = await fetch('/api/v1/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email, password })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.erro || "Erro desconhecido");
+                    }
+
+                    localStorage.setItem('token', data.token);
+
+                    window.location.href = "/dashboard";
+
+                } catch (error) {
+                    alert("Erro: " + error.message);
+                    btn.innerText = textoOriginal;
+                    btn.disabled = false;
+                }
+            }
+        </script>
+
+    </div>
+
+</body>
+
+</html>

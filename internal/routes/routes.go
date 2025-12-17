@@ -1,8 +1,9 @@
 package routes
 
 import (
+	"net/http"
 	"sistema-os/internal/handlers"
-	"sistema-os/internal/middleware" // <--- Importante: Importar o middleware
+	"sistema-os/internal/middleware"
 	"sistema-os/internal/repository"
 
 	"github.com/gin-gonic/gin"
@@ -11,26 +12,34 @@ import (
 
 func ConfigurarRotas(r *gin.Engine, db *gorm.DB) {
 
-	// REPOS
+	r.Static("/assets", "./assets")
+	r.Static("/uploads", "./uploads")
+
 	clienteRepo := repository.NovoClienteRepository(db)
 	osRepo := repository.NovoOSRepository(db)
 
-	// HANDLERS
 	clienteHandler := handlers.NovoClienteHandler(clienteRepo)
 	osHandler := handlers.NovoOSHandler(osRepo)
 	authHandler := handlers.NovoAuthHandler(db)
 
-	r.Static("/assets", "./uploads")
+	r.GET("/login", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "login.html", gin.H{"titulo": "Login"})
+	})
+
+	r.GET("/dashboard", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "dashboard.html", gin.H{"titulo": "Painel de Controle"})
+	})
 
 	api := r.Group("/api/v1")
 	{
-
+		// Públicas
 		api.POST("/login", authHandler.Login)
 		api.POST("/registrar", authHandler.Registrar)
 
 		protected := api.Group("/")
 		protected.Use(middleware.AuthMiddleware())
 		{
+			// Grupo Clientes
 			clientes := protected.Group("/clientes")
 			{
 				clientes.POST("/", clienteHandler.CriarCliente)
@@ -38,6 +47,7 @@ func ConfigurarRotas(r *gin.Engine, db *gorm.DB) {
 				clientes.GET("/:id", clienteHandler.BuscarCliente)
 			}
 
+			// Grupo Ordens de Serviço
 			oss := protected.Group("/os")
 			{
 				oss.POST("/", osHandler.CriarOS)

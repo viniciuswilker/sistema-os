@@ -15,6 +15,7 @@ func main() {
 	database.DB.AutoMigrate(&models.Cliente{}, &models.Usuario{}, &models.OrdemServico{}, &models.Cliente{})
 
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*")
 
 	routes.ConfigurarRotas(r, database.DB)
 

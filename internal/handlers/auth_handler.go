@@ -2,12 +2,14 @@ package handlers
 
 import (
 	"net/http"
-	"sistema-os/internal/auth"
 	"sistema-os/internal/models"
+	"time"
 
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthHandler struct {
@@ -19,51 +21,82 @@ func NovoAuthHandler(db *gorm.DB) *AuthHandler {
 }
 
 // /api/v1/login
+var jwtKey = []byte("sua_chave_secreta_super_dificil")
+
 func (h *AuthHandler) Login(c *gin.Context) {
-	var credenciais struct {
+	var creds struct {
 		Email    string `json:"email"`
-		Password string `json:"senha"`
+		Password string `json:"password"`
 	}
 
-	if err := c.ShouldBindJSON(&credenciais); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"erro": "Dados inválidos"})
+	if err := c.ShouldBindJSON(&creds); err != nil {
+		c.JSON(400, gin.H{"erro": "Dados inválidos"})
 		return
 	}
 
-	var usuario models.Usuario
-	if err := h.db.Where("email = ?", credenciais.Email).First(&usuario).Error; err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"erro": "Credenciais inválidas"})
+	var user models.Usuario
+	if err := h.db.Where("email = ?", creds.Email).First(&user).Error; err != nil {
+		c.JSON(400, gin.H{"erro": "Usuário ou senha incorretos"})
 		return
 	}
 
-	if !auth.CheckPassword(credenciais.Password, usuario.Password) {
-		c.JSON(http.StatusUnauthorized, gin.H{"erro": "Credenciais inválidas"})
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(creds.Password)); err != nil {
+		c.JSON(400, gin.H{"erro": "Usuário ou senha incorretos"})
 		return
 	}
 
-	token, err := auth.GenerateToken(usuario.ID)
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &jwt.MapClaims{
+		"sub": user.ID,
+		"exp": expirationTime.Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(jwtKey)
+
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao gerar token"})
+		c.JSON(500, gin.H{"erro": "Erro ao gerar token"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"token": token})
+	c.JSON(200, gin.H{
+		"token": tokenString,
+	})
 }
 
 // /api/v1/registrar
 func (h *AuthHandler) Registrar(c *gin.Context) {
-	var usuario models.Usuario
+	var req struct {
+		Nome     string `json:"Nome" binding:"required"`
+		Email    string `json:"Email" binding:"required,email"`
+		Password string `json:"Password" binding:"required,min=6"`
+	}
 
-	if err := c.ShouldBindJSON(&usuario); err != nil {
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"erro": err.Error()})
 		return
 	}
 
-	if err := h.db.Create(&usuario).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao criar usuário. Email ou RG já existem?"})
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Falha ao processar senha"})
 		return
 	}
 
-	usuario.Password = ""
-	c.JSON(http.StatusCreated, usuario)
+	novoUsuario := models.Usuario{
+		Nome:     req.Nome,
+		Email:    req.Email,
+		Password: string(hashedPassword),
+	}
+
+	if err := h.db.Create(&novoUsuario).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao criar usuário"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"id":   novoUsuario.ID,
+		"nome": novoUsuario.Nome,
+		"msg":  "Usuário criado com sucesso",
+	})
 }

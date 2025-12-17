@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Admin - Ordens de Serviço</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f6f7f8;
+            color: #0f172a;
+        }
+
+        /* LAYOUT */
+        .layout {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+        }
+
+        .perfil {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2b8cee, #1e40af);
+        }
+
+        .perfil span {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .menu a,
+        .sidebar-rodape a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #475569;
+            font-size: 14px;
+        }
+
+        .menu a:hover {
+            background: #f1f5f9;
+        }
+
+        .menu .ativo {
+            background: rgba(43, 140, 238, 0.1);
+            color: #2b8cee;
+            font-weight: 700;
+        }
+
+        /* CONTEÚDO */
+        .conteudo {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .cabecalho-mobile {
+            display: none;
+        }
+
+        /* PÁGINA */
+        .pagina {
+            padding: 32px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .topo-pagina {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .topo-pagina h1 {
+            font-size: 36px;
+            font-weight: 900;
+        }
+
+        /* BOTÃO */
+        .btn-nova-ordem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #2b8cee;
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* FILTROS */
+        .filtros {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .campo-busca {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .campo-busca input {
+            border: none;
+            outline: none;
+            flex: 1;
+        }
+
+        /* STATUS */
+        .status {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 24px;
+        }
+
+        .status button {
+            border-radius: 999px;
+            padding: 6px 14px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            cursor: pointer;
+        }
+
+        .status-ativo {
+            background: #0f172a;
+            color: white;
+        }
+
+        /* TABELA */
+        .card-tabela {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 16px;
+            text-align: left;
+        }
+
+        thead {
+            background: #f8fafc;
+        }
+
+        tbody tr:hover {
+            background: #f1f5f9;
+        }
+
+        td span {
+            display: block;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .acoes {
+            text-align: right;
+        }
+
+        .acoes button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #64748b;
+        }
+
+        /* BADGES */
+        .badge {
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .reparo {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .aguardando {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .finalizado {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        /* PAGINAÇÃO */
+        .paginacao {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .paginacao button {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+            background: white;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+
+            .cabecalho-mobile {
+                display: flex;
+                justify-content: space-between;
+                padding: 16px;
+                background: white;
+                border-bottom: 1px solid #e5e7eb;
+            }
+        }
+    </style>
+
+
+</head>
+
+<body>
+
+    <div class="layout">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+
+            <div class="sidebar-topo">
+                <div class="perfil">
+                    <div class="avatar"></div>
+                    <div>
+                        <strong>TechFix Admin</strong>
+                        <span>Painel de Controle</span>
+                    </div>
+                </div>
+
+                <nav class="menu">
+                    <a href="#">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        Dashboard
+                    </a>
+
+                    <a href="#" class="ativo">
+                        <span class="material-symbols-outlined preenchido">receipt_long</span>
+                        Ordens de Serviço
+                    </a>
+
+                    <a href="#">
+                        <span class="material-symbols-outlined">group</span>
+                        Clientes
+                    </a>
+
+                    <a href="#">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        Estoque
+                    </a>
+
+                    <a href="#">
+                        <span class="material-symbols-outlined">payments</span>
+                        Financeiro
+                    </a>
+                </nav>
+            </div>
+
+            <div class="sidebar-rodape">
+                <a href="#">
+                    <span class="material-symbols-outlined">settings</span>
+                    Configurações
+                </a>
+            </div>
+
+        </aside>
+
+        <main class="conteudo">
+
+            <header class="cabecalho-mobile">
+                <strong>TechFix</strong>
+                <span class="material-symbols-outlined">menu</span>
+            </header>
+
+            <section class="pagina">
+
+                <div class="topo-pagina">
+                    <div>
+                        <div class="breadcrumb">
+                            <span>Painel</span>
+                            <span class="material-symbols-outlined">chevron_right</span>
+                            <strong>Ordens de Serviço</strong>
+                        </div>
+
+                        <h1>Gerenciamento de Ordens</h1>
+                        <p>Visualize, filtre e gerencie todas as manutenções.</p>
+                    </div>
+
+                    <button class="btn-nova-ordem">
+                        <span class="material-symbols-outlined">add</span>
+                        Nova Ordem
+                    </button>
+                </div>
+
+                <div class="filtros">
+                    <div class="campo-busca">
+                        <span class="material-symbols-outlined">search</span>
+                        <input type="text" placeholder="Buscar por cliente, OS ou aparelho">
+                    </div>
+
+                    <div class="campo-busca">
+                        <span class="material-symbols-outlined">calendar_today</span>
+                        <input type="text" placeholder="Filtrar por data">
+                    </div>
+                </div>
+
+                <div class="status">
+                    <button class="status-ativo">Todos</button>
+                    <button>Recebido</button>
+                    <button>Em Análise</button>
+                    <button>Aguardando Aprovação</button>
+                    <button>Aprovado</button>
+                    <button>Em Reparo</button>
+                    <button>Finalizado</button>
+                    <button>Cancelado</button>
+                </div>
+
+                <div class="card-tabela">
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nº OS</th>
+                                <th>Cliente</th>
+                                <th>Aparelho</th>
+                                <th>Entrada</th>
+                                <th>Valor</th>
+                                <th>Status</th>
+                                <th class="direita">Ações</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <tr>
+                                <td><strong>#OS-2023-085</strong></td>
+                                <td>
+                                    <strong>Maria Silva</strong>
+                                    <span>maria@email.com</span>
+                                </td>
+                                <td>iPhone 13 - Tela</td>
+                                <td>14/10/2023</td>
+                                <td><strong>R$ 450,00</strong></td>
+                                <td><span class="badge reparo">Em Reparo</span></td>
+                                <td class="acoes">
+                                    <button><span class="material-symbols-outlined">visibility</span></button>
+                                    <button><span class="material-symbols-outlined">edit</span></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>#OS-2023-084</strong></td>
+                                <td>
+                                    <strong>João Souza</strong>
+                                    <span>(11) 99876-5432</span>
+                                </td>
+                                <td>Dell Inspiron</td>
+                                <td>12/10/2023</td>
+                                <td><strong>R$ 1.200,00</strong></td>
+                                <td><span class="badge aguardando">Aguardando</span></td>
+                                <td class="acoes">
+                                    <button><span class="material-symbols-outlined">visibility</span></button>
+                                    <button><span class="material-symbols-outlined">edit</span></button>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td><strong>#OS-2023-082</strong></td>
+                                <td>
+                                    <strong>Tech Corp</strong>
+                                    <span>Corporativo</span>
+                                </td>
+                                <td>Impressora HP</td>
+                                <td>10/10/2023</td>
+                                <td><strong>R$ 250,00</strong></td>
+                                <td><span class="badge finalizado">Finalizado</span></td>
+                                <td class="acoes">
+                                    <button><span class="material-symbols-outlined">visibility</span></button>
+                                    <button><span class="material-symbols-outlined">edit</span></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="paginacao">
+                        <p>Mostrando 1 a 5 de 24 resultados</p>
+                        <div>
+                            <button disabled>Anterior</button>
+                            <button>Próximo</button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
