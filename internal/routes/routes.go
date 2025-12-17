@@ -34,6 +34,7 @@ func ConfigurarRotas(r *gin.Engine, db *gorm.DB) {
 			oss.POST("/", osHandler.CriarOS)
 			oss.GET("/", osHandler.ListarOS)
 			oss.GET("/:id", osHandler.BuscarOS)
+			oss.POST("/:id/fotos", osHandler.UploadFoto)
 		}
 
 	}

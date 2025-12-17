@@ -1,10 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"sistema-os/internal/models"
 	"sistema-os/internal/repository"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -49,4 +53,40 @@ func (h *OSHandler) BuscarOS(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, os)
+}
+
+func (h *OSHandler) UploadFoto(c *gin.Context) {
+	idParam := c.Param("id")
+	osID, _ := strconv.Atoi(idParam)
+
+	file, err := c.FormFile("foto")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"erro": "Arquivo não enviado"})
+		return
+	}
+
+	if _, err := os.Stat("uploads"); os.IsNotExist(err) {
+		os.Mkdir("uploads", os.ModePerm)
+	}
+
+	ext := filepath.Ext(file.Filename)
+	novoNome := fmt.Sprintf("%d_%d%s", osID, time.Now().Unix(), ext)
+	caminhoDestino := "uploads/" + novoNome
+
+	if err := c.SaveUploadedFile(file, caminhoDestino); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Falha ao salvar arquivo"})
+		return
+	}
+
+	foto := models.Foto{
+		OrdemServicoID: uint(osID),
+		Caminho:        caminhoDestino,
+	}
+
+	if err := h.repo.AdicionarFoto(&foto); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"erro": "Erro ao registrar foto no banco"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"mensagem": "Upload realizado", "foto": foto})
 }

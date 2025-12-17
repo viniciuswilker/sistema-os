@@ -29,7 +29,7 @@ func (r *OSRepository) Listar() ([]models.OrdemServico, error) {
 
 func (r *OSRepository) BuscarPorID(id uint) (*models.OrdemServico, error) {
 	var os models.OrdemServico
-	err := r.db.Preload("Cliente").First(&os, id).Error
+	err := r.db.Preload("Cliente").Preload("Fotos").First(&os, id).Error
 	return &os, err
 }
 
@@ -38,4 +38,8 @@ func (r *OSRepository) AtualizarStatus(id uint, status string, valor float64) er
 		"status": status,
 		"valor":  valor,
 	}).Error
+}
+
+func (r *OSRepository) AdicionarFoto(foto *models.Foto) error {
+	return r.db.Create(foto).Error
 }

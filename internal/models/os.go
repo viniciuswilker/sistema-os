@@ -14,4 +14,5 @@ type OrdemServico struct {
 	Status      string  `gorm:"default:'Recebido'" json:"status"`
 	Valor       float64 `json:"valor"`
 	Observacoes string  `json:"observacoes"`
+	Fotos       []Foto  `gorm:"foreignKey:OrdemServicoID" json:"fotos"`
 }
