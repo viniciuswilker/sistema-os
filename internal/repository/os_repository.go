@@ -15,7 +15,7 @@ func NovoOSRepository(db *gorm.DB) *OSRepository {
 
 }
 
-func (r *OSRepository) Criar(os models.OrdemServico) error {
+func (r *OSRepository) Criar(os *models.OrdemServico) error {
 	return r.db.Create(os).Error
 }
 

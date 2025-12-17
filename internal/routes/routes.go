@@ -10,8 +10,13 @@ import (
 
 func ConfigurarRotas(r *gin.Engine, db *gorm.DB) {
 
+	// repos
 	clienteRepo := repository.NovoClienteRepository(db)
+	osRepo := repository.NovoOSRepository(db)
+
+	// handlers
 	clienteHandler := handlers.NovoClienteHandler(clienteRepo)
+	osHandler := handlers.NovoOSHandler(osRepo)
 
 	api := r.Group("/api/v1")
 	{
@@ -21,6 +26,14 @@ func ConfigurarRotas(r *gin.Engine, db *gorm.DB) {
 			clientes.GET("/", clienteHandler.ListarClientes)
 			clientes.GET("/:id", clienteHandler.BuscarCliente)
 
+		}
+
+		oss := api.Group("/os")
+
+		{
+			oss.POST("/", osHandler.CriarOS)
+			oss.GET("/", osHandler.ListarOS)
+			oss.GET("/:id", osHandler.BuscarOS)
 		}
 
 	}
