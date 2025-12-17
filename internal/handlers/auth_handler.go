@@ -18,10 +18,11 @@ func NovoAuthHandler(db *gorm.DB) *AuthHandler {
 	return &AuthHandler{db: db}
 }
 
+// /api/v1/login
 func (h *AuthHandler) Login(c *gin.Context) {
 	var credenciais struct {
 		Email    string `json:"email"`
-		Password string `json:"password"`
+		Password string `json:"senha"`
 	}
 
 	if err := c.ShouldBindJSON(&credenciais); err != nil {
@@ -49,6 +50,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"token": token})
 }
 
+// /api/v1/registrar
 func (h *AuthHandler) Registrar(c *gin.Context) {
 	var usuario models.Usuario
 

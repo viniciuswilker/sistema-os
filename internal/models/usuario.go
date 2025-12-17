@@ -10,9 +10,9 @@ type Usuario struct {
 	Nome      string `gorm:"not null" json:"nome"`
 	Sobrenome string `gorm:"not null" json:"sobrenome"`
 	Email     string `gorm:"unique;not null" json:"email"`
-	Password  string `gorm:"not null" json:"-"`
 	RG        string `gorm:"unique;not null" json:"rg"`
 	Endereco  string `json:"endereco"`
+	Password  string `gorm:"not null" json:"senha"`
 }
 
 func (u *Usuario) BeforeSave(tx *gorm.DB) (err error) {
